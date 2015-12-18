@@ -648,6 +648,16 @@ var HistogramContainer;
          */
         AppUI.setHighlightedCallstack(stack, stack);
       });
+
+      var self = this;
+      var event = new CustomEvent("HistogramClick", {
+        detail: {
+          histogramView: self,
+          sample: sample
+        }
+      });
+
+      gHistogramContainer.container.dispatchEvent(event);
     },
 
     highlightedCallstackChanged: function (stack, inverted) {

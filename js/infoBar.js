@@ -53,6 +53,10 @@
         case 'compare':
           this.openProfileCompare();
           break;
+
+        case 'load_tt':
+          this.loadTTProfileFile(document.getElementById('load_tt').files);
+          break;
       }
     },
     getContainer: function InfoBar_getContainer() {
@@ -118,12 +122,14 @@
       infoText += "<h2>Compare</h2>\n";
       infoText += "<input type='button' id='compare' value='Compare'>\n";
 
+      infoText += "<h2>Load Task Tracer profile</h2>\n";
+      infoText += "<input type='file' id='load_tt' value='Load'>\n";
       //infoText += "<br>\n";
       //infoText += "Skip functions:<br>\n";
       //infoText += "<select size=8 id='skipsymbol'></select><br />"
       //infoText += "<input type='button' id='delete_skipsymbol' value='Delete'/><br />\n";
       //infoText += "<input type='button' id='add_skipsymbol' value='Add'/><br />\n";
-      
+
       infobar.innerHTML = infoText;
       this.addTooltips();
 
@@ -151,6 +157,8 @@
         document.getElementById('showPowerInfo').addEventListener('change', this);
         document.getElementById('txtPeakPower').addEventListener('change', this);
       }
+      document.getElementById('load_tt').addEventListener('change', this);
+
       //document.getElementById('delete_skipsymbol').onclick = delete_skip_symbol;
       //document.getElementById('add_skipsymbol').onclick = add_skip_symbol;
 
@@ -165,7 +173,7 @@
       /**
        * @todo Decouple Cleopatra
        */
-      
+
       Cleopatra.promptUploadProfile();
     },
 
@@ -198,7 +206,7 @@
 
     toggleMergeUnbranched: function InfoBar_toggleMergeUnbranched() {
       gMergeUnbranched = !gMergeUnbranched;
-      AppUI.viewOptionsChanged(); 
+      AppUI.viewOptionsChanged();
     },
 
     toggleJank: function InfoBar_toggleJank(/* optional */ threshold) {
@@ -245,7 +253,7 @@
         "download" : "Initiate a download of the full profile.",
       };
       for (var elemId in tooltip) {
-        var elem = document.getElementById(elemId); 
+        var elem = document.getElementById(elemId);
         if (!elem)
           continue;
         if (elem.parentNode.nodeName.toLowerCase() == "label")
@@ -387,7 +395,7 @@
         elOptNew.text = gSkipSymbols[i];
         elOptNew.value = gSkipSymbols[i];
         elSel.add(elOptNew);
-      } 
+      }
     },
 
     delete_skip_symbol: function InfoBar_delete_skip_symbol() {
@@ -395,7 +403,20 @@
     },
 
     add_skip_symbol: function InfoBar_add_skip_symbol() {
-      
+
+    },
+
+    loadTTProfileFile: function infoBar_loadTTProfileFile(fileList) {
+      if (fileList.length == 0)
+        return;
+      var file = fileList[0];
+
+      var reader = new FileReader();
+      var self = this;
+      reader.onloadend = function () {
+        window.gTasktracer.loadRawProfile(reader.result);
+      };
+      reader.readAsText(file, "utf-8");
     }
   }
 
